@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GitHub Profile Viewer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      color: #fff;
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+
+    .search-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    input {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: none;
+      width: 250px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #00dfc4;
+      color: #000;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #01bea7;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px 20px;
+      width: 90vw;
+      max-width: 400px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      color: #fff;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid #00dfc4;
+    }
+
+    p {
+      margin: 8px 0;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #00dfc4;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s ease;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>GitHub Profile Viewer</h1>
+  <div class="search-container">
+    <input type="text" id="inputId" placeholder="Enter GitHub username" />
+    <button onclick="fetchdata()">Search</button>
+  </div>
+  <ul id="ulId"></ul>
+
+  <script>
+    const inputEle = document.getElementById("inputId");
+    const ulEle = document.getElementById("ulId"); 
+
+    async function fetchdata() {
+      const username = inputEle.value.trim();
+      ulEle.innerHTML = "";
+
+      if (!username) return;
+
+      try {
+        const response = await fetch(`https://api.github.com/users/${username}`);
+
+        if (!response.ok) throw new Error("User not found or rate limit exceeded");
+
+        const info = await response.json();
+
+        const liEle = document.createElement("li");
+
+        const img = document.createElement("img");
+        img.src = info.avatar_url;
+        img.alt = "Profile picture";
+        liEle.appendChild(img);
+
+        const name = document.createElement("p");
+        name.textContent = `👤 ${info.name || "No Name Provided"}`;
+        liEle.appendChild(name);
+
+        const bio = document.createElement("p");
+        bio.textContent = `💬 ${info.bio || "No bio available"}`;
+        liEle.appendChild(bio);
+
+        const repos = document.createElement("p");
+        repos.textContent = `📦 Public Repositories: ${info.public_repos}`;
+        liEle.appendChild(repos);
+
+        const followers = document.createElement("p");
+        followers.textContent = `👥 Followers: ${info.followers}`;
+        liEle.appendChild(followers);
+
+        const link = document.createElement("a");
+        link.href = info.html_url;
+        link.textContent = "🔗 View GitHub Profile";
+        link.target = "_blank";
+        liEle.appendChild(link);
+
+        ulEle.appendChild(liEle);
+      } catch (error) {
+        console.error(error);
+        const errorLi = document.createElement("li");
+        errorLi.textContent = `❌ ${error.message}`;
+        ulEle.appendChild(errorLi);
+      }
+    }
+  </script>
+
+</body>
+</html>

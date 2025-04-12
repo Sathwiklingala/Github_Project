@@ -132,6 +132,12 @@
     const inputEle = document.getElementById("inputId");
     const ulEle = document.getElementById("ulId"); 
 
+    inputEle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        fetchdata();
+      }
+    });
+
     async function fetchdata() {
       const username = inputEle.value.trim();
       ulEle.innerHTML = "";
